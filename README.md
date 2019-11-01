@@ -1,2 +1,2 @@
-# fillit2
+# fillit
 The function place Tetriminos in the smallest square
