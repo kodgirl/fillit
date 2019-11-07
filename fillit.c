@@ -6,11 +6,39 @@
 /*   By: bjasper <bjasper@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/28 15:33:47 by bjasper           #+#    #+#             */
-/*   Updated: 2019/11/01 19:11:46 by bjasper          ###   ########.fr       */
+/*   Updated: 2019/11/07 22:37:22 by bjasper          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fillit.h"
+
+void ft_length(t_fill a)
+{
+    int i;
+
+    i = 0;
+    a.x_len = a.sharp[i] % 10;
+    a.y_len = a.sharp[i] / 10;
+    while (++i < 4)
+    {
+        if (a.sharp[i] % 10 > a.x_len)
+            a.x_len = a.sharp[i] % 10;
+        if (a.sharp[i] / 10 > a.y_len)
+            a.y_len = a.sharp[i] / 10;
+    }
+}
+
+void    ft_coordinates(int *a)
+{
+    int i;
+
+    i = 0;
+    while (i < 4)
+    {
+        a[i] = a[i] / 10 * 10 + a[i] % 10;
+        ++i;
+    }
+}
 
 void    ft_upp(int *a)
 {
@@ -56,60 +84,24 @@ int is_figure_valid(char *buf, int i)
     return (connect);
 }
 
-int ft_save(int tetnum, int *sharp, t_fill figure)
-{
-    /* 
-    ** it makes two-dimensional array of valid tetrominos 
-    */
-   
-    int x;
-    int y;
-    int i;
-
-    y = 0;
-    figure.order = 'A' + tetnum;
-    while (y++ < 4)
-    { 
-        x = 0;
-        while (x++ < 4)
-            figure.yx[y - 1][x - 1] = '.';
-    }
-    i = 0;
-    while (i++ < 4)
-    {
-        y = sharp[i - 1] / 5;
-        x = sharp[i - 1] % 5;
-        figure.yx[y][x] = figure.order;
-        printf("bukva %c;", figure.yx[y][x]);
-    }
-    figure.x_len = x + 1;
-    figure.y_len = y + 1;
-    printf("%d:%d\n", figure.x_len, figure.y_len);
-    return (0);
-}
-
 int validity(int fd, char *buf)
 {
     /*
     ** check validity of input tetrominos. If invalid - return 0.
     */
    
-    int sharp[4];
     int ret;
     int i;
     int tetnum;
     int connect;
     t_fill figure[26];
 
-    int m;
-
     tetnum = 0;    
     while((ret = read(fd, buf, BUFF_SIZE))) //read one tetramino
     {
-        m = 0;
         connect = 0;
         i = 0;
-        if (ret < 20 || (ret == 21 && buf[20] != '\n') || tetnum > 26) 
+        if (ret < 20 || (ret == 21 && buf[20] != '\n') || tetnum > 26)
             exit(0);
         ret = 0;
         while (i < 20)  //check validity of possible simbols in tetrominos
@@ -120,7 +112,7 @@ int validity(int fd, char *buf)
                 ++i;
             else if (buf[i++] == '#' && i % 5 != 0 && ret < 4)
             {
-                sharp[ret] = i - 1; //memorize indexes of sharps 
+                figure[tetnum].sharp[ret] = i - 1; //memorize indexes of sharps
                 connect = connect + is_figure_valid(buf, i - 1);
                 // printf("%d, ", sharp[ret]);
                 ++ret;
@@ -130,18 +122,10 @@ int validity(int fd, char *buf)
         }
         if (ret != 4 || (connect != 3 && connect != 4)) //check validity of sharp's numbers and tetramino figure
             exit(0);
-        printf("\n%d connections\n", connect);
-        ft_upp(sharp);
-
-        while (m < 4)
-        {
-            printf("%d, ", sharp[m]);
-            ++m;
-        }
-        
-        ft_save(tetnum, sharp, figure[tetnum]);
+        ft_upp(figure[tetnum].sharp);
+        ft_coordinates(figure[tetnum].sharp);
+        ft_length(figure[tetnum]);    
         ++tetnum;
-        printf("\n");
     }
     return (tetnum);
 }
