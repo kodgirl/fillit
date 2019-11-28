@@ -5,30 +5,35 @@
 #                                                     +:+ +:+         +:+      #
 #    By: bjasper <bjasper@student.42.fr>            +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2019/10/21 13:25:20 by bjasper           #+#    #+#              #
-#    Updated: 2019/10/23 18:15:00 by bjasper          ###   ########.fr        #
+#    Created: 2019/09/11 14:22:48 by mcamila           #+#    #+#              #
+#    Updated: 2019/11/11 22:43:46 by bjasper          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-.PHONY: all re clean fclean
-
 NAME = fillit
-SRCS = fillit.c 
-LIBA_PATH = /Users/bjasper/fillit/libft
-LIBA = libft.a
+
+SRC = validity.c validity1.c fillit_2.c fillit_22.c
+
+INCL = fillit.h
+
+GCC_FLAGS = -Wall -Werror -Wextra
+
+OBJ = $(SRC:.c=.o)
+
+.PHONY: all clean fclean re
 
 all: $(NAME)
 
-$(NAME): $(LIBA)
-	gcc -g -o $(NAME) $(SRCS) $(LIBA_PATH)/$(LIBA) 
-	
-$(LIBA):
-	$(MAKE) -C $(LIBA_PATH)
-	$(MAKE) clean -C $(LIBA_PATH)
-	
+$(NAME): $(OBJ)
+	gcc $(OBJ) -o fillit
+
+%.o: %.c ${INCL}
+	gcc $(GCC_FLAGS) -c $<
+
 clean:
-	rm -rf $(NAME)
-	
+	rm -rf $(OBJ)
+
 fclean: clean
+	rm -rf $(NAME)
 
 re: fclean all
