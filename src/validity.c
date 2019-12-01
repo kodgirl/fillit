@@ -12,6 +12,26 @@
 
 #include "fillit.h"
 
+static void		ft_length(t_fill *a)
+{
+	int i;
+
+	i = 0;
+	a->x_len = a->sharp[i] % 10;
+	a->y_len = a->sharp[i] / 10;
+	++i;
+	while (i < 4)
+	{
+		if (a->sharp[i] % 10 > a->x_len)
+			a->x_len = a->sharp[i] % 10;
+		if (a->sharp[i] / 10 > a->y_len)
+			a->y_len = a->sharp[i] / 10;
+		++i;
+	}
+	++a->x_len;
+	++a->y_len;
+}
+
 static void		ft_coordinates(int *a)
 {
 	int i;

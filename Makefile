@@ -12,9 +12,9 @@
 
 NAME = fillit
 
-SRC = validity.c validity1.c fillit_2.c fillit_22.c
+SRC = src/*.c
 
-INCL = fillit.h
+INCL = includes/fillit.h
 
 GCC_FLAGS = -Wall -Werror -Wextra
 
